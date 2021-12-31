@@ -105,145 +105,137 @@ public class Chart extends AppCompatActivity {
             }
         });
 
-        buttonClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clearUI();
-            }
-        });
-        aSwitchRun.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mData.child("Status").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        String value = snapshot.getValue(String.class);
-                        if (value.equals("ON")){
-                            mConnectionState.setText(value);
-                        }else{
-                            mConnectionState.setText("OFF");
-                        }
+        buttonClear.setOnClickListener(v -> clearUI());
+        aSwitchRun.setOnClickListener(v -> {
+            mData.child("Status").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                    String value = snapshot.getValue(String.class);
+                    if (value.equals("ON")){
+                        mConnectionState.setText(value);
+                    }else{
+                        mConnectionState.setText("OFF");
                     }
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                        Toast.makeText(Chart.this, "Cant connected to firebase", Toast.LENGTH_SHORT).show();
+                }
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                    Toast.makeText(Chart.this, "Cant connected to firebase", Toast.LENGTH_SHORT).show();
+                }
+            });
+            mData.child("ApSuat").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                    String value = snapshot.getValue(String.class);
+                    float i;
+                    double currentTime;
+                    try {
+                        i = Float.parseFloat(value);
+                    }catch (Exception e){
+                        i = 0;
                     }
-                });
-                mData.child("ApSuat").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        String value = snapshot.getValue(String.class);
-                        float i;
-                        double currentTime;
-                        try {
-                            i = Float.parseFloat(value);
-                        }catch (Exception e){
-                            i = 0;
-                        }
 
-                        if (i!=0){
-                            if(startTime == 0.0)
-                            {
-                                startTime = Calendar.getInstance().getTimeInMillis();
-                                currentTime = startTime;
-                            }else
-                            {
-                                currentTime = Calendar.getInstance().getTimeInMillis();
-                            }
-
-                            double time = (currentTime - startTime) / 1000.0;
-
-                            valuesPressure.add(new Entry((float)time, i));
-
-                            while(valuesPressure.size() > maximumDataSet)
-                                valuesPressure.remove(0);
-
-                            updateCharts();
+                    if (i!=0){
+                        if(startTime == 0.0)
+                        {
+                            startTime = Calendar.getInstance().getTimeInMillis();
+                            currentTime = startTime;
+                        }else
+                        {
+                            currentTime = Calendar.getInstance().getTimeInMillis();
                         }
 
+                        double time = (currentTime - startTime) / 1000.0;
 
+                        valuesPressure.add(new Entry((float)time, i));
+
+                        while(valuesPressure.size() > maximumDataSet)
+                            valuesPressure.remove(0);
+
+                        updateCharts();
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                        Toast.makeText(Chart.this, "Fall get Pressure data from Firebase", Toast.LENGTH_SHORT).show();
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                    Toast.makeText(Chart.this, "Fall get Pressure data from Firebase", Toast.LENGTH_SHORT).show();
+                }
+            });
+            mData.child("DoAm").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                    String value = snapshot.getValue(String.class);
+                    float i;
+                    double currentTime;
+                    try {
+                        i = Float.parseFloat(value);
+                    }catch (Exception e){
+                        i = 0;
                     }
-                });
-                mData.child("DoAm").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        String value = snapshot.getValue(String.class);
-                        float i;
-                        double currentTime;
-                        try {
-                            i = Float.parseFloat(value);
-                        }catch (Exception e){
-                            i = 0;
+
+                    if (i!=0) {
+                        if (startTime == 0.0) {
+                            startTime = Calendar.getInstance().getTimeInMillis();
+                            currentTime = startTime;
+                        } else {
+                            currentTime = Calendar.getInstance().getTimeInMillis();
                         }
 
-                        if (i!=0) {
-                            if (startTime == 0.0) {
-                                startTime = Calendar.getInstance().getTimeInMillis();
-                                currentTime = startTime;
-                            } else {
-                                currentTime = Calendar.getInstance().getTimeInMillis();
-                            }
+                        double time = (currentTime - startTime) / 1000.0;
 
-                            double time = (currentTime - startTime) / 1000.0;
+                        valuesAltitude.add(new Entry((float) time, i));
 
-                            valuesAltitude.add(new Entry((float) time, i));
+                        while (valuesAltitude.size() > maximumDataSet)
+                            valuesAltitude.remove(0);
 
-                            while (valuesAltitude.size() > maximumDataSet)
-                                valuesAltitude.remove(0);
+                        updateCharts();
+                    }
 
-                            updateCharts();
+                }
+
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                    Toast.makeText(Chart.this, "Fall get Humid data from Firebase", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+            mData.child("NhietDo").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                    String value = snapshot.getValue(String.class);
+                    float i;
+                    double currentTime;
+                    try {
+                        i = Float.parseFloat(value);
+                    }catch (Exception e){
+                        i = 0;
+                    }
+
+                    if (i!=0) {
+                        if (startTime == 0.0) {
+                            startTime = Calendar.getInstance().getTimeInMillis();
+                            currentTime = startTime;
+                        } else {
+                            currentTime = Calendar.getInstance().getTimeInMillis();
                         }
 
+                        double time = (currentTime - startTime) / 1000.0;
+
+                        valuesTemperature.add(new Entry((float) time, i));
+
+                        while (valuesTemperature.size() > maximumDataSet)
+                            valuesTemperature.remove(0);
+
+                        updateCharts();
                     }
+                }
 
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                        Toast.makeText(Chart.this, "Fall get Humid data from Firebase", Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-                mData.child("NhietDo").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        String value = snapshot.getValue(String.class);
-                        float i;
-                        double currentTime;
-                        try {
-                            i = Float.parseFloat(value);
-                        }catch (Exception e){
-                            i = 0;
-                        }
-
-                        if (i!=0) {
-                            if (startTime == 0.0) {
-                                startTime = Calendar.getInstance().getTimeInMillis();
-                                currentTime = startTime;
-                            } else {
-                                currentTime = Calendar.getInstance().getTimeInMillis();
-                            }
-
-                            double time = (currentTime - startTime) / 1000.0;
-
-                            valuesTemperature.add(new Entry((float) time, i));
-
-                            while (valuesTemperature.size() > maximumDataSet)
-                                valuesTemperature.remove(0);
-
-                            updateCharts();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                        Toast.makeText(Chart.this, "Fall get Temperature data from Firebase", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                    Toast.makeText(Chart.this, "Fall get Temperature data from Firebase", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
     }
