@@ -48,6 +48,9 @@ public class Chart extends AppCompatActivity {
     private int maximumDataSet = 20;
     private String receiveBuffer = "";
     DatabaseReference mData;
+    private float apsuat = 0;
+    private float nhietdo = 0;
+    private float doam = 0;
 
 
     @Override
@@ -61,7 +64,7 @@ public class Chart extends AppCompatActivity {
         final Intent intent = getIntent();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         initializeCharts();
-       // messageHandler();
+        messageHandler();
         setData();
 
         textViewDataSet.setText("Data set: " + maximumDataSet);
@@ -126,15 +129,14 @@ public class Chart extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                     String value = snapshot.getValue(String.class);
-                    float i;
                     double currentTime;
                     try {
-                        i = Float.parseFloat(value);
+                        apsuat = Float.parseFloat(value);
                     }catch (Exception e){
-                        i = 0;
+                        apsuat = 0;
                     }
 
-                    if (i!=0){
+                    if (apsuat!=0){
                         if(startTime == 0.0)
                         {
                             startTime = Calendar.getInstance().getTimeInMillis();
@@ -146,7 +148,7 @@ public class Chart extends AppCompatActivity {
 
                         double time = (currentTime - startTime) / 1000.0;
 
-                        valuesPressure.add(new Entry((float)time, i));
+                        valuesPressure.add(new Entry((float)time, apsuat));
 
                         while(valuesPressure.size() > maximumDataSet)
                             valuesPressure.remove(0);
@@ -166,15 +168,15 @@ public class Chart extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                     String value = snapshot.getValue(String.class);
-                    float i;
+
                     double currentTime;
                     try {
-                        i = Float.parseFloat(value);
+                        doam = Float.parseFloat(value);
                     }catch (Exception e){
-                        i = 0;
+                        doam = 0;
                     }
 
-                    if (i!=0) {
+                    if (doam!=0) {
                         if (startTime == 0.0) {
                             startTime = Calendar.getInstance().getTimeInMillis();
                             currentTime = startTime;
@@ -184,7 +186,7 @@ public class Chart extends AppCompatActivity {
 
                         double time = (currentTime - startTime) / 1000.0;
 
-                        valuesAltitude.add(new Entry((float) time, i));
+                        valuesAltitude.add(new Entry((float) time, doam));
 
                         while (valuesAltitude.size() > maximumDataSet)
                             valuesAltitude.remove(0);
@@ -204,15 +206,14 @@ public class Chart extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                     String value = snapshot.getValue(String.class);
-                    float i;
                     double currentTime;
                     try {
-                        i = Float.parseFloat(value);
+                        nhietdo = Float.parseFloat(value);
                     }catch (Exception e){
-                        i = 0;
+                        nhietdo = 0;
                     }
 
-                    if (i!=0) {
+                    if (nhietdo!=0) {
                         if (startTime == 0.0) {
                             startTime = Calendar.getInstance().getTimeInMillis();
                             currentTime = startTime;
@@ -222,7 +223,7 @@ public class Chart extends AppCompatActivity {
 
                         double time = (currentTime - startTime) / 1000.0;
 
-                        valuesTemperature.add(new Entry((float) time, i));
+                        valuesTemperature.add(new Entry((float) time, nhietdo));
 
                         while (valuesTemperature.size() > maximumDataSet)
                             valuesTemperature.remove(0);
@@ -238,6 +239,17 @@ public class Chart extends AppCompatActivity {
             });
         });
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     private void anhxa() {

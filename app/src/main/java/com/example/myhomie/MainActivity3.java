@@ -137,26 +137,26 @@ public class MainActivity3 extends AppCompatActivity {
         frombottom    = AnimationUtils.loadAnimation(this, R.anim.frombottom);
 
 
-        tvName      = (TextView) findViewById(R.id.tvName);
-        tvCountry   = (TextView) findViewById(R.id.tvCountry);
-        tvTemp      = (TextView) findViewById(R.id.tvTemperature);
-        tvHumid     = (TextView) findViewById(R.id.tvHumidity);
-        tvStatus    = (TextView) findViewById(R.id.tvStatus);
-        tvWind      = (TextView) findViewById(R.id.tvSpeed);
-        tvDay       = (TextView) findViewById(R.id.tvDay);
-        tvCloudsmall= (TextView) findViewById(R.id.tvCloud);
-        imgIcon     = (ImageView) findViewById(R.id.imageIcon);
+        tvName      = findViewById(R.id.tvName);
+        tvCountry   = findViewById(R.id.tvCountry);
+        tvTemp      = findViewById(R.id.tvTemperature);
+        tvHumid     = findViewById(R.id.tvHumidity);
+        tvStatus    = findViewById(R.id.tvStatus);
+        tvWind      = findViewById(R.id.tvSpeed);
+        tvDay       = findViewById(R.id.tvDay);
+        tvCloudsmall= findViewById(R.id.tvCloud);
+        imgIcon     = findViewById(R.id.imageIcon);
 
 
-        infor   = (ImageView) findViewById(R.id.menuInfor);
-        sensor  = (ImageView) findViewById(R.id.sensor);
-        weather = (ImageView) findViewById(R.id.imgWeather);
-        cctv    = (ImageView) findViewById(R.id.cctv);
+        infor   = findViewById(R.id.menuInfor);
+        sensor  = findViewById(R.id.sensor);
+        weather = findViewById(R.id.imgWeather);
+        cctv    = findViewById(R.id.cctv);
 
-        texthome        = (LinearLayout) findViewById(R.id.textHome);
-        textsplash      = (LinearLayout) findViewById(R.id.textSplash);
-        menus           = (LinearLayout) findViewById(R.id.menus);
-        relativeLayout  = (RelativeLayout) findViewById(R.id.nextday);
+        texthome        = findViewById(R.id.textHome);
+        textsplash      = findViewById(R.id.textSplash);
+        menus           = findViewById(R.id.menus);
+        relativeLayout  = findViewById(R.id.nextday);
 
 
         textsplash.animate().translationY(140).alpha(0).setDuration(800).setStartDelay(300);
@@ -173,13 +173,8 @@ public class MainActivity3 extends AppCompatActivity {
         });
         infor.setOnClickListener(v -> showmenu2());
 
-        sensor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity3.this, Device.class);
-//                startActivity(intent);
-                Showmenu();
-            }
+        sensor.setOnClickListener(v -> {
+            Showmenu();
         });
 
         weather.setOnClickListener(v -> {
@@ -222,7 +217,6 @@ public class MainActivity3 extends AppCompatActivity {
                     }
 
                 }
-
             }
 
             @Override

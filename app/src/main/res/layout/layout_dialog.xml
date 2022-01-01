@@ -39,6 +39,7 @@
             android:layout_marginTop="16dp"
             android:hint="password"
             android:paddingLeft="6dp"
+            android:maxLength="8"
             android:background="@drawable/custom_layout_dialog3"/>
 
         <LinearLayout
