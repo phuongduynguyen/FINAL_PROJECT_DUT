@@ -26,7 +26,7 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:text="disconnected"
+        android:text="Disconnected"
         android:textSize="18sp"
         android:textColor="#020202"
         app:layout_constraintBottom_toBottomOf="@+id/textViewState"
@@ -67,77 +67,86 @@
         app:layout_constraintTop_toBottomOf="@+id/chartPressure"
         app:layout_constraintVertical_bias="0.0" />
 
-    <TextView
-        android:layout_marginTop="10dp"
-        android:id="@+id/textViewUpdate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="update rate"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chartAltitude"
-        app:layout_constraintVertical_bias="0.0" />
 
-    <SeekBar
-        android:layout_marginTop="10dp"
-        android:id="@+id/seekBarUpdate"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:max="4"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewUpdate"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/buttonClear"
-        android:layout_width="85dp"
-        android:layout_height="35dp"
-        android:background="@drawable/custom_button2"
-        android:text="clear"
-        android:textSize="12dp"
-        app:backgroundTint="@null"
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/charCo2"
+        android:layout_width="match_parent"
+        android:layout_height="175dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBarDataSet"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.844" />
 
-    <Switch
-        android:layout_marginLeft="10dp"
-        android:id="@+id/switchRun"
+    <TextView
+        android:id="@+id/textViewUpdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="run"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonClear"
+        android:layout_marginTop="10dp"
+        android:text="Update rate"
+        android:textSize="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/buttonClear"
-        app:layout_constraintTop_toTopOf="@+id/buttonClear" />
+        app:layout_constraintHorizontal_bias="0.294"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.916" />
+
+    <SeekBar
+        android:id="@+id/seekBarUpdate"
+        android:layout_width="228dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="10dp"
+        android:max="4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.098"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchRun"
+        android:layout_width="111dp"
+        android:layout_height="35dp"
+        android:textOff="O"
+        android:textOn="|"
+        android:thumb="@drawable/thumb"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.789"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.979"
+        app:showText="true"
+        app:track="@drawable/track" />
 
     <TextView
         android:id="@+id/textViewDataSet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="samples"
+        android:text="Samples"
+        android:textSize="13dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.285"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBarUpdate"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.972" />
 
     <SeekBar
-        android:layout_marginTop="10dp"
         android:id="@+id/seekBarDataSet"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="227dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="10dp"
         android:max="100"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.103"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewDataSet"
-        app:layout_constraintVertical_bias="0.0" />
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.994" />
 </androidx.constraintlayout.widget.ConstraintLayout>

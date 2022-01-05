@@ -109,15 +109,15 @@
 
             <ImageView
                 android:id="@+id/ptdoor"
-                android:layout_width="86dp"
-                android:layout_height="96dp"
+                android:layout_width="81dp"
+                android:layout_height="83dp"
                 android:src="@drawable/door_close"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.494"
+                app:layout_constraintHorizontal_bias="0.62"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.242" />
+                app:layout_constraintVertical_bias="0.257" />
 
             <Switch
                 android:id="@+id/swdoor"

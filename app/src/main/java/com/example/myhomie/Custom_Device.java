@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -19,11 +17,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 
 import soup.neumorphism.NeumorphFloatingActionButton;
 
@@ -45,12 +38,12 @@ public class Custom_Device extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.custom_device);
-        anhxa();
+        mapping_layout();
 
         final DatabaseReference mayLanh     = database.getReference("MayLanh");
         final DatabaseReference quat        = database.getReference("Quat");
         final DatabaseReference den         = database.getReference("Den");
-        final DatabaseReference cua         = database.getReference("Cua");
+        final DatabaseReference cua         = database.getReference("speaker");
         final DatabaseReference seekBarTemp = database.getReference("SeekBarTemp");
         final DatabaseReference fanLevel    = database.getReference("FanLevel");
         final DatabaseReference cold        = database.getReference("Cold");
@@ -63,12 +56,12 @@ public class Custom_Device extends AppCompatActivity {
                     stateAir = true;
                     imgAir.setImageResource(R.drawable.neu_air_conditioner_on);
                     img_btn_pw_ac.setImageResource(R.drawable.power_onn);
-                    Toast.makeText(Custom_Device.this,"Turn on Air-Conditioner", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Custom_Device.this,"Air-Conditioner: ON", Toast.LENGTH_SHORT).show();
                 }else if(value.equals("OFF")) {
                     stateAir = false;
                     imgAir.setImageResource(R.drawable.air_conditioner_neu);
                     img_btn_pw_ac.setImageResource(R.drawable.power_off);
-                    Toast.makeText(Custom_Device.this,"Turn off the Air-Conditioner",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Custom_Device.this,"Air-Conditioner: OFF",Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
@@ -164,14 +157,11 @@ public class Custom_Device extends AppCompatActivity {
             }
         });
 
-        swFan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    quat.setValue("ON");
-                }else{
-                    quat.setValue("OFF");
-                }
+        swFan.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                quat.setValue("ON");
+            }else{
+                quat.setValue("OFF");
             }
         });
 
@@ -197,14 +187,11 @@ public class Custom_Device extends AppCompatActivity {
             }
         });
 
-        swLight.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    den.setValue("ON");
-                }else{
-                    den.setValue("OFF");
-                }
+        swLight.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                den.setValue("ON");
+            }else{
+                den.setValue("OFF");
             }
         });
 
@@ -216,12 +203,12 @@ public class Custom_Device extends AppCompatActivity {
                     stateDoor = true;
                     imgDoor.setImageResource(R.drawable.door_open);
                     swDoor.setChecked(true);
-                    Toast.makeText(Custom_Device.this,"Door: ON", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Custom_Device.this,"Speaker: ON", Toast.LENGTH_SHORT).show();
                 } else if(value.equals("OFF")) {
                     stateDoor = false;
                     imgDoor.setImageResource(R.drawable.door_close);
                     swDoor.setChecked(false);
-                    Toast.makeText(Custom_Device.this,"Door: OFF", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Custom_Device.this,"Speaker: OFF", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -232,14 +219,11 @@ public class Custom_Device extends AppCompatActivity {
             }
         });
 
-        swDoor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    cua.setValue("ON");
-                }else{
-                    cua.setValue("OFF");
-                }
+        swDoor.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                cua.setValue("ON");
+            }else{
+                cua.setValue("OFF");
             }
         });
 
@@ -261,7 +245,7 @@ public class Custom_Device extends AppCompatActivity {
     }
 
 
-        private void anhxa() {
+        private void mapping_layout() {
 
         imgAir              = (ImageView) findViewById(R.id.ptAir);
         imgFan              = (ImageView) findViewById(R.id.ptFan);
@@ -271,15 +255,11 @@ public class Custom_Device extends AppCompatActivity {
         img_btn_pw_ac       = (ImageView) findViewById(R.id.img_btn_power_AC);
         img_btn_fan_ac      = (ImageView) findViewById(R.id.img_btn_fan_AC);
         img_btn_cold_ac     = (ImageView) findViewById(R.id.img_btn_cold_AC);
-
         swLight             = (Switch)  findViewById(R.id.swLight);
         swFan               = (Switch)  findViewById(R.id.swFan);
         swDoor              = (Switch)  findViewById(R.id.swdoor);
-
         neu_power           = (NeumorphFloatingActionButton) findViewById(R.id.neu_power_btn);
-
         tvTemp              = (TextView) findViewById(R.id.tvTemp);
-
         seekBar_Temp        = (SeekBar) findViewById(R.id.seekBarTemp);
 
 

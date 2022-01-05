@@ -7,7 +7,6 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
 
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 public class MyService extends Service {
@@ -49,7 +48,7 @@ public class MyService extends Service {
         Intent resultIntent = new Intent(this, MainActivity3.class);
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
-        android.app.Notification notification = new NotificationCompat.Builder(this, com.example.myhomie.Notification.CHANNEL_ID)
+        android.app.Notification notification = new NotificationCompat.Builder(this, MyApplication.CHANNEL_ID)
                 .setContentTitle("My Homie is running")
                 .setSmallIcon(R.drawable.notificationn)
                 .setContentIntent(resultPendingIntent)

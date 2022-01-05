@@ -2,10 +2,12 @@ package com.example.myhomie;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -32,6 +34,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import android.widget.AbsSeekBar;
+import static com.example.myhomie.DataLocalManager.getDataFirebase;
+import static com.example.myhomie.DataLocalManager.getIntData_Set;
+import static com.example.myhomie.DataLocalManager.getIntData_Update;
+import static com.example.myhomie.DataLocalManager.setDataFirebase;
+import static com.example.myhomie.DataLocalManager.setIntData_Set;
+import static com.example.myhomie.DataLocalManager.setIntData_Update;
+import static com.facebook.login.widget.ProfilePictureView.TAG;
+
 public class Chart extends AppCompatActivity {
 
     private TextView mConnectionState;
@@ -39,18 +50,21 @@ public class Chart extends AppCompatActivity {
     private ArrayList<Entry> valuesTemperature = new ArrayList<>();
     private ArrayList<Entry> valuesPressure = new ArrayList<>();
     private ArrayList<Entry> valuesAltitude = new ArrayList<>();
-    private int updatePeriod = 1000;
-    private SeekBar seekBarUpdate, seekBarDataSet;
+    private ArrayList<Entry> valuesCo2 = new ArrayList<>();
+    static int updatePeriod = 1000;
+    SeekBar seekBarUpdate, seekBarDataSet;
     private TextView textViewUpdate, textViewDataSet;
-    private LineChart chartTemperature, chartPressure, chartAltitude;
-    private Switch aSwitchRun;
-    private Button buttonClear;
-    private int maximumDataSet = 20;
+    private LineChart chartTemperature, chartPressure, chartAltitude, chartCo2;
+    private SwitchCompat aSwitchRun;
+    static int maximumDataSet = 20;
     private String receiveBuffer = "";
     DatabaseReference mData;
     private float apsuat = 0;
     private float nhietdo = 0;
     private float doam = 0;
+    private float co2 = 0;
+    static boolean state = false;
+    boolean state_run = false;
 
 
     @Override
@@ -61,22 +75,28 @@ public class Chart extends AppCompatActivity {
         anhxa();
         mData         = FirebaseDatabase.getInstance().getReference();
 
-        final Intent intent = getIntent();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         initializeCharts();
-        messageHandler();
         setData();
 
-        textViewDataSet.setText("Data set: " + maximumDataSet);
+        if(state){
+        textViewDataSet.setText("Data set: " + DataLocalManager.getIntData_Set());
+        seekBarDataSet.setProgress(DataLocalManager.getIntData_Set());
+        textViewUpdate.setText("Update period: " + DataLocalManager.getIntData_Update() + " s");
+        seekBarUpdate.setProgress( DataLocalManager.getIntData_Update());
+        updatePeriod    =   DataLocalManager.getIntData_Update() * 1000;
+        maximumDataSet  =   DataLocalManager.getIntData_Set() ;
+        }
 
         seekBarUpdate.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 updatePeriod = (progress + 1) * 1000;
+                DataLocalManager.setIntData_Update(progress+1);
                 if(progress != 0)
                     textViewUpdate.setText("Update period: " + (progress + 1) + " seconds");
                 else
-                    textViewUpdate.setText("Update period: 1 second");
+                    textViewUpdate.setText("Update period: 1 s");
             }
 
             @Override
@@ -94,6 +114,8 @@ public class Chart extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 maximumDataSet = progress + 20;
+                DataLocalManager.setIntData_Set( (progress + 20));
+                state = true;
                 textViewDataSet.setText("Data set: " + (progress + 20));
             }
 
@@ -108,136 +130,175 @@ public class Chart extends AppCompatActivity {
             }
         });
 
-        buttonClear.setOnClickListener(v -> clearUI());
         aSwitchRun.setOnClickListener(v -> {
+            state_run =! state_run;
             mData.child("Status").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                    String value = snapshot.getValue(String.class);
-                    if (value.equals("ON")){
-                        mConnectionState.setText(value);
-                    }else{
-                        mConnectionState.setText("OFF");
-                    }
+                    Toast.makeText(Chart.this, "Connected to firebase", Toast.LENGTH_SHORT).show();
                 }
                 @Override
                 public void onCancelled(@NonNull @NotNull DatabaseError error) {
                     Toast.makeText(Chart.this, "Cant connected to firebase", Toast.LENGTH_SHORT).show();
                 }
             });
-            mData.child("ApSuat").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                    String value = snapshot.getValue(String.class);
-                    double currentTime;
-                    try {
-                        apsuat = Float.parseFloat(value);
-                    }catch (Exception e){
-                        apsuat = 0;
-                    }
 
-                    if (apsuat!=0){
-                        if(startTime == 0.0)
-                        {
-                            startTime = Calendar.getInstance().getTimeInMillis();
-                            currentTime = startTime;
-                        }else
-                        {
-                            currentTime = Calendar.getInstance().getTimeInMillis();
+            if(state_run){
+                mConnectionState.setText("ON");
+                mData.child("ApSuat").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        String value = snapshot.getValue(String.class);
+                        double currentTime;
+                        try {
+                            apsuat = Float.parseFloat(value);
+                        }catch (Exception e){
+                            apsuat = 0;
                         }
 
-                        double time = (currentTime - startTime) / 1000.0;
+                        if (apsuat!=0){
+                            if(startTime == 0.0)
+                            {
+                                startTime = Calendar.getInstance().getTimeInMillis();
+                                currentTime = startTime;
+                            }else
+                            {
+                                currentTime = Calendar.getInstance().getTimeInMillis();
+                            }
 
-                        valuesPressure.add(new Entry((float)time, apsuat));
+                            double time = (currentTime - startTime) / 1000.0;
 
-                        while(valuesPressure.size() > maximumDataSet)
-                            valuesPressure.remove(0);
+                            valuesPressure.add(new Entry((float)time, apsuat));
 
-                        updateCharts();
-                    }
+                            while(valuesPressure.size() > maximumDataSet)
+                                valuesPressure.remove(0);
 
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                    Toast.makeText(Chart.this, "Fall get Pressure data from Firebase", Toast.LENGTH_SHORT).show();
-                }
-            });
-            mData.child("DoAm").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                    String value = snapshot.getValue(String.class);
-
-                    double currentTime;
-                    try {
-                        doam = Float.parseFloat(value);
-                    }catch (Exception e){
-                        doam = 0;
-                    }
-
-                    if (doam!=0) {
-                        if (startTime == 0.0) {
-                            startTime = Calendar.getInstance().getTimeInMillis();
-                            currentTime = startTime;
-                        } else {
-                            currentTime = Calendar.getInstance().getTimeInMillis();
+                            updateCharts();
                         }
 
-                        double time = (currentTime - startTime) / 1000.0;
 
-                        valuesAltitude.add(new Entry((float) time, doam));
-
-                        while (valuesAltitude.size() > maximumDataSet)
-                            valuesAltitude.remove(0);
-
-                        updateCharts();
                     }
 
-                }
-
-                @Override
-                public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                    Toast.makeText(Chart.this, "Fall get Humid data from Firebase", Toast.LENGTH_SHORT).show();
-
-                }
-            });
-            mData.child("NhietDo").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                    String value = snapshot.getValue(String.class);
-                    double currentTime;
-                    try {
-                        nhietdo = Float.parseFloat(value);
-                    }catch (Exception e){
-                        nhietdo = 0;
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        Toast.makeText(Chart.this, "Fall get Pressure data from Firebase", Toast.LENGTH_SHORT).show();
                     }
+                });
+                mData.child("DoAm").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        String value = snapshot.getValue(String.class);
 
-                    if (nhietdo!=0) {
-                        if (startTime == 0.0) {
-                            startTime = Calendar.getInstance().getTimeInMillis();
-                            currentTime = startTime;
-                        } else {
-                            currentTime = Calendar.getInstance().getTimeInMillis();
+                        double currentTime;
+                        try {
+                            doam = Float.parseFloat(value);
+                        }catch (Exception e){
+                            doam = 0;
                         }
 
-                        double time = (currentTime - startTime) / 1000.0;
+                        if (doam!=0) {
+                            if (startTime == 0.0) {
+                                startTime = Calendar.getInstance().getTimeInMillis();
+                                currentTime = startTime;
+                            } else {
+                                currentTime = Calendar.getInstance().getTimeInMillis();
+                            }
 
-                        valuesTemperature.add(new Entry((float) time, nhietdo));
+                            double time = (currentTime - startTime) / 1000.0;
 
-                        while (valuesTemperature.size() > maximumDataSet)
-                            valuesTemperature.remove(0);
+                            valuesAltitude.add(new Entry((float) time, doam));
 
-                        updateCharts();
+                            while (valuesAltitude.size() > maximumDataSet)
+                                valuesAltitude.remove(0);
+
+                            updateCharts();
+                        }
+
                     }
-                }
 
-                @Override
-                public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                    Toast.makeText(Chart.this, "Fall get Temperature data from Firebase", Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        Toast.makeText(Chart.this, "Fall get Humid data from Firebase", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+                mData.child("NhietDo").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        String value = snapshot.getValue(String.class);
+                        double currentTime;
+                        try {
+                            nhietdo = Float.parseFloat(value);
+                        }catch (Exception e){
+                            nhietdo = 0;
+                        }
+
+                        if (nhietdo!=0) {
+                            if (startTime == 0.0) {
+                                startTime = Calendar.getInstance().getTimeInMillis();
+                                currentTime = startTime;
+                            } else {
+                                currentTime = Calendar.getInstance().getTimeInMillis();
+                            }
+
+                            double time = (currentTime - startTime) / 1000.0;
+
+                            valuesTemperature.add(new Entry((float) time, nhietdo));
+
+                            while (valuesTemperature.size() > maximumDataSet)
+                                valuesTemperature.remove(0);
+
+                            updateCharts();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        Toast.makeText(Chart.this, "Fall get Temperature data from Firebase", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                mData.child("Co2").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        String value = snapshot.getValue(String.class);
+                        double currentTime;
+                        try {
+                            co2 = Float.parseFloat(value);
+                        }catch (Exception e){
+                            co2 = 0;
+                        }
+
+                        if (co2!=0) {
+                            if (startTime == 0.0) {
+                                startTime = Calendar.getInstance().getTimeInMillis();
+                                currentTime = startTime;
+                            } else {
+                                currentTime = Calendar.getInstance().getTimeInMillis();
+                            }
+
+                            double time = (currentTime - startTime) / 1000.0;
+
+                            valuesCo2.add(new Entry((float) time, co2));
+
+                            while (valuesCo2.size() > maximumDataSet)
+                                valuesCo2.remove(0);
+                            updateCharts();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        Toast.makeText(Chart.this, "Fall get Co2 data from Firebase", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }else {
+                mConnectionState.setText("OFF");
+                clearUI();
+            }
+
         });
+
+
 
     }
 
@@ -245,11 +306,19 @@ public class Chart extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        outState.putFloat("apsuat", apsuat);
+        outState.putFloat("nhietdo", nhietdo);
+        outState.putFloat("doam", doam);
+        outState.putInt("datatset",maximumDataSet);
+        outState.putInt("period",updatePeriod);
     }
 
     @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
+    protected void onRestoreInstanceState(@NonNull Bundle outState) {
+        super.onRestoreInstanceState(outState);
+        seekBarUpdate.setProgress(outState.getInt("period"));
+        seekBarDataSet.setProgress(outState.getInt("datatset"));
+        textViewUpdate.setText("Update period: " + (outState.getInt("period") + 1) + " seconds");
     }
 
     private void anhxa() {
@@ -259,7 +328,6 @@ public class Chart extends AppCompatActivity {
         textViewDataSet     = findViewById(R.id.textViewDataSet);
         seekBarUpdate       = findViewById(R.id.seekBarUpdate);
         seekBarDataSet      = findViewById(R.id.seekBarDataSet);
-        buttonClear         = findViewById(R.id.buttonClear);
 
     }
 
@@ -275,16 +343,16 @@ public class Chart extends AppCompatActivity {
         chartTemperature.setTouchEnabled(false);
 
         // enable scaling and dragging
-        chartTemperature.setDragEnabled(false);
-        chartTemperature.setScaleEnabled(false);
+        chartTemperature.setDragEnabled(true);
+        chartTemperature.setScaleEnabled(true);
         chartTemperature.setScaleY(1.0f);
 
         // if disabled, scaling can be done on x- and y-axis separately
         chartTemperature.setPinchZoom(false);
 
-        chartTemperature.getAxisLeft().setDrawGridLines(false);
+        chartTemperature.getAxisLeft().setDrawGridLines(true);
         chartTemperature.getAxisRight().setEnabled(false);
-        chartTemperature.getXAxis().setDrawGridLines(false);
+        chartTemperature.getXAxis().setDrawGridLines(true);
         chartTemperature.getXAxis().setDrawAxisLine(false);
         chartTemperature.animateY(2000);
         chartTemperature.animateX(2000);
@@ -301,16 +369,16 @@ public class Chart extends AppCompatActivity {
         chartPressure.setTouchEnabled(false);
 
         // enable scaling and dragging
-        chartPressure.setDragEnabled(false);
-        chartPressure.setScaleEnabled(false);
+        chartPressure.setDragEnabled(true);
+        chartPressure.setScaleEnabled(true);
         chartPressure.setScaleY(1.0f);
 
         // if disabled, scaling can be done on x- and y-axis separately
         chartPressure.setPinchZoom(false);
 
-        chartPressure.getAxisLeft().setDrawGridLines(false);
+        chartPressure.getAxisLeft().setDrawGridLines(true);
         chartPressure.getAxisRight().setEnabled(false);
-        chartPressure.getXAxis().setDrawGridLines(false);
+        chartPressure.getXAxis().setDrawGridLines(true);
         chartPressure.getXAxis().setDrawAxisLine(false);
 
 
@@ -325,17 +393,41 @@ public class Chart extends AppCompatActivity {
         chartAltitude.setTouchEnabled(false);
 
         // enable scaling and dragging
-        chartAltitude.setDragEnabled(false);
-        chartAltitude.setScaleEnabled(false);
+        chartAltitude.setDragEnabled(true);
+        chartAltitude.setScaleEnabled(true);
         chartAltitude.setScaleY(1.0f);
 
         // if disabled, scaling can be done on x- and y-axis separately
         chartAltitude.setPinchZoom(false);
-
-        chartAltitude.getAxisLeft().setDrawGridLines(false);
+        chartAltitude.getAxisLeft().setDrawGridLines(true);
         chartAltitude.getAxisRight().setEnabled(false);
-        chartAltitude.getXAxis().setDrawGridLines(false);
+        chartAltitude.getXAxis().setDrawGridLines(true);
         chartAltitude.getXAxis().setDrawAxisLine(false);
+
+
+
+        // init co2 chart
+
+        chartCo2 = findViewById(R.id.charCo2);
+        chartCo2.setDrawGridBackground(true);
+
+        // no description text
+        chartCo2.getDescription().setEnabled(false);
+
+        // enable touch gestures
+        chartCo2.setTouchEnabled(false);
+
+        // enable scaling and dragging
+        chartCo2.setDragEnabled(true);
+        chartCo2.setScaleEnabled(true);
+        chartCo2.setScaleY(1.0f);
+
+        // if disabled, scaling can be done on x- and y-axis separately
+        chartCo2.setPinchZoom(false);
+        chartCo2.getAxisLeft().setDrawGridLines(true);
+        chartCo2.getAxisRight().setEnabled(false);
+        chartCo2.getXAxis().setDrawGridLines(true);
+        chartCo2.getXAxis().setDrawAxisLine(false);
     }
 
     private void updateCharts()
@@ -343,12 +435,13 @@ public class Chart extends AppCompatActivity {
         chartTemperature.resetTracking();
         chartPressure.resetTracking();
         chartAltitude.resetTracking();
-
+        chartCo2.resetTracking();
         setData();
         // redraw
         chartTemperature.invalidate();
         chartPressure.invalidate();
         chartAltitude.invalidate();
+        chartCo2.invalidate();
     }
 
     private void setData() {
@@ -413,6 +506,27 @@ public class Chart extends AppCompatActivity {
         // get the legend (only possible after setting data)
         l = chartAltitude.getLegend();
         l.setEnabled(true);
+
+
+        // create a dataset and give it a type
+        set1 = new LineDataSet(valuesCo2, "Co2 (ppm)");
+        set1.setColor(Color.CYAN);
+        set1.setLineWidth(1.0f);
+        set1.setDrawValues(true);
+        set1.setDrawCircles(true);
+        set1.setMode(LineDataSet.Mode.LINEAR);
+        set1.setDrawFilled(false);
+
+        // create a data object with the data sets
+        data = new LineData(set1);
+
+        // set data
+        chartCo2.setData(data);
+
+        // get the legend (only possible after setting data)
+        l = chartCo2.getLegend();
+        l.setEnabled(true);
+
     }
 
     private void clearUI() {
@@ -420,6 +534,7 @@ public class Chart extends AppCompatActivity {
         valuesTemperature.clear();
         valuesPressure.clear();
         valuesAltitude.clear();
+        valuesCo2.clear();
         startTime = 0.0;
         updateCharts();
     }
@@ -466,7 +581,6 @@ public class Chart extends AppCompatActivity {
 
                 while(valuesAltitude.size() > maximumDataSet)
                     valuesAltitude.remove(0);
-
                 updateCharts();
             }
 
