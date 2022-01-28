@@ -7,8 +7,15 @@
 #include <WiFiClient.h>
 #include <EEPROM.h>
 #include <ESP8266WebServer.h>
-#define Led D0
-#define Button D2
+#define RL1 5
+#define RL2 4
+#define RL3 0
+
+#define Touch1 14
+#define Touch2 12
+#define Touch3 13
+
+
 #define FIREBASE_HOST "myhomie-72e49-default-rtdb.firebaseio.com"
 #define FIREBASE_AUTH "WJfbu2S9GVfHcwDIgBvZcbYFhv2LBiiPmsoSro7T"
 FirebaseData firebaseData;
@@ -34,18 +41,32 @@ ESP8266WebServer webServer(80);
 
 volatile bool state = false;
 volatile bool but_1 = false;
-void ButCallback(void);
+void Touch1_Callback(void);
+void Touch2_Callback(void);
+void Touch3_Callback(void);
+
 void printResult(FirebaseData &data);
 
+volatile bool ML = false;
+volatile bool Q = false;
+volatile bool D = false;
 
+volatile bool state1 = false;
+volatile bool state2 = false;
+volatile bool state3 = false;
 
 void setup()
 {
  Serial.begin(115200);
 
- pinMode(Led,OUTPUT);
- digitalWrite(Led, state);
- attachInterrupt(digitalPinToInterrupt(Button), ButCallback, RISING);
+ pinMode(RL1, OUTPUT);;
+ pinMode(RL2, OUTPUT);
+ pinMode(RL3, OUTPUT);
+
+ attachInterrupt(digitalPinToInterrupt(Touch1), Touch1_Callback, CHANGE);
+ attachInterrupt(digitalPinToInterrupt(Touch2), Touch2_Callback, CHANGE);
+ attachInterrupt(digitalPinToInterrupt(Touch3), Touch3_Callback, CHANGE);
+
  
  EEPROM.begin(512);       //
  delay(10);
@@ -105,19 +126,38 @@ void loop()
     dnsServer.processNextRequest();
     }
   webServer.handleClient();
-
-  if(but_1){
-    digitalWrite(Led, state);
-    but_1 = false;
-    if(state){
-      Firebase.setString(firebaseData, path + "/MayLanh", "ON");
-    }else {
-      Firebase.setString(firebaseData, path + "/MayLanh", "OFF");
-    }   
-  }
+  
+    if(ML){
+      digitalWrite(RL1, state1);
+      ML = false;
+      if(state1){
+        Firebase.setString(firebaseData, path + "/MayLanh", "ON");
+      }else {
+        Firebase.setString(firebaseData, path + "/MayLanh", "OFF");
+      }   
+    }
 
 //-------------------------------------------------------------------------------------------
-
+    if(Q){
+        digitalWrite(RL2, state2);
+        Q = false;
+        if(state2){
+          Firebase.setString(firebaseData, path + "/Quat", "ON");
+        }else {
+          Firebase.setString(firebaseData, path + "/Quat", "OFF");
+        }   
+      }
+//-------------------------------------------------------------------------------------------
+    if(D){
+        digitalWrite(RL3, state3);
+        D = false;
+        if(state3){
+          Firebase.setString(firebaseData, path + "/Den", "ON");
+        }else {
+          Firebase.setString(firebaseData, path + "/Den", "OFF");
+        }   
+      }
+//-------------------------------------------------------------------------------------------
 // may lanh
   if (!Firebase.readStream(firebaseData1))
   {
@@ -135,13 +175,13 @@ void loop()
   if (firebaseData1.streamAvailable())
   {
     if(firebaseData1.stringData()== "ON"){
-      state = true;
-      digitalWrite(Led,state);
+      state1 = true;
+      digitalWrite(RL1,state1);
       Serial.println("May Lanh : ON");
       }
     else{
-        state = false;
-       digitalWrite(Led,state);
+        state1 = false;
+       digitalWrite(RL1,state1);
        Serial.println("May Lanh : OFF");
       }
   }
@@ -172,10 +212,14 @@ void loop()
 //    Serial.println("EVENT TYPE: " + firebaseData2.eventType());
 //    Serial.print("VALUE: ");
     if(firebaseData2.stringData()== "ON"){
+       state2 = true;
+      digitalWrite(RL2,state2);
       Serial.println("Quat : ON");
       }
     else{
-        Serial.println("Quat : OFF");
+       state2 = false;
+       digitalWrite(RL2,state2);
+       Serial.println("Quat : OFF");
         }
   }
 
@@ -197,26 +241,34 @@ void loop()
   }
   if (firebaseData3.streamAvailable())
   {
-//    Serial.println("------------------------------------");
-//    Serial.println("Stream Data available... Printing");
-//    Serial.println("STREAM PATH: " + firebaseData2.streamPath());
-//    Serial.println("EVENT PATH: " + firebaseData2.dataPath());
-//    Serial.println("DATA TYPE: " + firebaseData2.dataType());
-//    Serial.println("EVENT TYPE: " + firebaseData2.eventType());
-//    Serial.print("VALUE: ");
+
     if(firebaseData3.stringData()== "ON"){
+       state3 = true;
+      digitalWrite(RL3,state3);
       Serial.println("Den : ON");
       }
     else{
-        Serial.println("Den : OFF");
+       state3 = false;
+       digitalWrite(RL3,state3);
+       Serial.println("Den : OFF");
         }
   } 
 }
 
 
-void IRAM_ATTR ButCallback (){
-   but_1 = true;  
-   state = !state;   
+void IRAM_ATTR Touch1_Callback (){
+   ML = true;  
+   state1 = !state1;   
+}
+
+void IRAM_ATTR Touch2_Callback (){
+   Q = true;  
+   state2 = !state2;   
+}
+
+void IRAM_ATTR Touch3_Callback (){
+   D = true;  
+   state3 = !state3;   
 }
  //Firebase.setString(firebaseData, path + "/NhietDo", "37");
  
