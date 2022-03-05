@@ -44,7 +44,6 @@ public class MainActivity4 extends AppCompatActivity {
                         tab.setText("Co2");
                         break;
                 }
-
             }
         }).attach();
     }

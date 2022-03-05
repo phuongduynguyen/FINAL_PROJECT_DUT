@@ -1,5 +1,6 @@
 package com.example.myhomie;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -10,11 +11,17 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -30,10 +37,13 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     private static final String TAG="MainActivity";
     private Mat mRgba;
     private Mat mGrey;
+
     private CameraBridgeViewBase mOpenCvCameraView;
     private int mCameraid = 0;
     private ImageView flip_camera;
     private face_Recognition face_Recognition;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -46,8 +56,8 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
                 default:
                 {
                     super.onManagerConnected(status);
+                    break;
                 }
-                break;
             }
         }
     };
@@ -61,6 +71,8 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+
+
         int MY_PERMISSIONS_REQUEST_CAMERA=0;
         //if camera permission is not given it will ask it on device
         if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA)
@@ -69,17 +81,33 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         }
 
         setContentView(R.layout.activity_camera);
-        mOpenCvCameraView=(CameraBridgeViewBase) findViewById(R.id.frame_Surface);
+
+         TextView   fps = (TextView) findViewById(R.id.tvFps);
+
+        mOpenCvCameraView= findViewById(R.id.frame_Surface);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.enableFpsMeter();
-//        FpsMeter fpsMeter = new FpsMeter();
 
         flip_camera = findViewById(R.id.flip_camera);
-        flip_camera.setOnClickListener(new View.OnClickListener() {
+        flip_camera.setOnClickListener(v -> swapCamera());
+
+        DatabaseReference cua  = database.getReference("Cua");
+        cua.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                swapCamera();
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String value = snapshot.getValue(String.class);
+                if (value.equals("ON")) {
+                    fps.setText("Door: Open");
+
+                }else if(value.equals("OFF")) {
+                    fps.setText("Door: Close");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
 
@@ -87,7 +115,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             int inputSize=96;
             face_Recognition=new face_Recognition(getAssets(),
                     CameraActivity.this,
-                    "EfficientNet_model.tflite",
+                    "model_5.tflite",
                     inputSize);
         }
         catch (IOException e){
@@ -151,5 +179,4 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         mRgba=face_Recognition.recognizeImage(mRgba);
         return mRgba;
     }
-
 }

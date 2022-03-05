@@ -167,7 +167,7 @@ public class MainActivity3 extends AppCompatActivity {
         });
 
         weather.setOnClickListener(v -> {
-            Intent intent = getPackageManager().getLaunchIntentForPackage("com.example.mqtt_esp32cam_viewer_full_version");
+            Intent intent = getPackageManager().getLaunchIntentForPackage("com.example.mqtt_esp32cam_viewer_full_version"); //com.example.mqtt_esp32cam_viewer_full_version
             if (intent != null) {
                 startActivity(intent);//null pointer check in case package name was not found
             }else{

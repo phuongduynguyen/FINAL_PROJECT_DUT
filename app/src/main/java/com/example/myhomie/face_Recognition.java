@@ -92,8 +92,6 @@ public class face_Recognition {
             cascadeClassifier = new CascadeClassifier(mCascadeFile.getAbsolutePath());
             // if cascade classifier is succesfully load
             Log.d("face_recognition","Classifier  is loaded");
-            Toast.makeText(context, "Classifier is loaded", Toast.LENGTH_SHORT).show();
-
 
         }
         catch (IOException e){
@@ -149,95 +147,95 @@ public class face_Recognition {
         mData = FirebaseDatabase.getInstance().getReference();
         String val="";
         if (read_face>=0 & read_face<0.5){
-            val="no in dataset";
+            val="";
         }
         else if (read_face>=0.5 & read_face<1.5){
-            val="no in dataset";
+            val="2";
         }
         else if (read_face>=1.5 & read_face<2.5){
-            val="no in dataset";
+            val="3";
         }
         else if (read_face>=2.5 & read_face<3.5){
-            val="no in dataset";
+            val="4";
         }
         else if (read_face>=3.5 & read_face<4.5){
-            val="no in dataset";
+            val="5";
         }
         else if (read_face>=4.5 & read_face<5.5){
-            val="no in dataset";
+            val="6";
         }
         else if (read_face>=5.5 & read_face<6.5){
-            val="no in dataset";
+            val="7";
         }
         else if (read_face>=6.5 & read_face<7.5){
-            val="no in dataset";
+            val="8";
         }
         else if (read_face>=7.5 & read_face<8.5){
-            val="no in dataset";
+            val="9";
         }
         else if (read_face>=8.5 & read_face<9.5){
-            val="no in dataset";
+            val="10";
         }
         else if (read_face>=9.5 & read_face<10.5){
-            val="no in dataset";
+            val="11";
         }
         else if (read_face>=10.5 & read_face<11.5){
             val="Messi";
         }
         else if (read_face>=11.5 & read_face<12.5){
-            val="no in dataset";
+            val="13";
         }
         else if (read_face>=12.5 & read_face<13.5){
-            val="phuong duy";
-            mData.child("Cua").setValue("ON");
+            val="No in dataset";
         }
         else if (read_face>=13.5 & read_face<14.5){
-            val="no in dataset";
+            val="15";
         }
         else if (read_face>=14.5 & read_face<15.5){
-            val="no in dataset";
+            val="16";
         }
         else if (read_face>=15.5 & read_face<=16.5){
-            val="no in dataset";
+            val="17";
         }
         else if (read_face>=16.5 & read_face<17.5){
-            val="Rolnaldo";
+            val="Ronaldo";
         }
         else if (read_face>=17.5 & read_face<18.5){
-            val="no in dataset";
+            val="19";
         }
         else if (read_face>=18.5 & read_face<19.5){
-            val="no in dataset";
+            val="Angelina";
         }
         else if (read_face>=19.5 & read_face<20.5){
-            val="no in dataset";
+            val="21";
         }
         else if (read_face>=20.5 & read_face<21.5){
-            val="no in dataset";
+            val="22";
         }
         else if (read_face>=21.5 & read_face<22.5){
-            val="no in dataset";
+            val="Puong Di";
+            mData.child("Cua").setValue("ON");
         }
         else if (read_face>=22.5 & read_face<23.5){
-            val="no in dataset";
+            val="24";
         }
         else if (read_face>=23.5 & read_face<24.5){
-            val="no in dataset";
+            val="25";
         }
         else if (read_face>=24.5 & read_face<25.5){
-            val="Pewdiepie";
+            val="26";
         }
         else if (read_face>=25.5 & read_face<=26.5){
-            val="no in dataset";
+            val="27";
         }
         else if (read_face>=26.5 & read_face<27.5){
-            val="no in dataset";
+            val="28";
         }
         else if (read_face>=27.5 & read_face<28.5){
-            val="no in dataset";
+            val="29";
         }
         else{
-            val="no in dataset";
+            val="30";
         }
         return val;
     }

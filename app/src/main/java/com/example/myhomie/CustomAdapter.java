@@ -43,11 +43,11 @@ public class CustomAdapter extends BaseAdapter {
 
         Thoitiet thoitiet = arrayList.get(i);
 
-        TextView txtDay         =  (TextView) view.findViewById(R.id.textviewNgay);
-        TextView txtStatus      =  (TextView) view.findViewById(R.id.textviewTrangthai);
-        TextView txtMaxTemp     =  (TextView) view.findViewById(R.id.textviewMaxTemp);
-        TextView txtMinTemp     =  (TextView) view.findViewById(R.id.textviewMinTemp);
-        ImageView imgStatus     =  (ImageView) view.findViewById(R.id.imageviewTrangthai);
+        TextView txtDay         = view.findViewById(R.id.textviewNgay);
+        TextView txtStatus      = view.findViewById(R.id.textviewTrangthai);
+        TextView txtMaxTemp     = view.findViewById(R.id.textviewMaxTemp);
+        TextView txtMinTemp     = view.findViewById(R.id.textviewMinTemp);
+        ImageView imgStatus     = view.findViewById(R.id.imageviewTrangthai);
 
         txtDay.setText(thoitiet.Day);
         txtStatus.setText(thoitiet.Status);

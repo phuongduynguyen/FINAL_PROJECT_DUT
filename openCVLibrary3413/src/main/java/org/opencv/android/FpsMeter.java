@@ -17,7 +17,7 @@ public class FpsMeter {
     private int                 mFramesCounter;
     private double              mFrequency;
     private long                mprevFrameTime;
-    private String              mStrfps;
+    String                      mStrfps;
     Paint                       mPaint;
     boolean                     mIsInitialized = false;
     int                         mWidth = 0;
@@ -51,6 +51,27 @@ public class FpsMeter {
                 Log.i(TAG, mStrfps);
             }
         }
+    }
+
+
+    public String fps_return() {
+        if (!mIsInitialized) {
+            init();
+            mIsInitialized = true;
+        } else {
+            mFramesCounter++;
+            if (mFramesCounter % STEP == 0) {
+                long time = Core.getTickCount();
+                double fps = STEP * mFrequency / (time - mprevFrameTime);
+                mprevFrameTime = time;
+                if (mWidth != 0 && mHeight != 0)
+                    mStrfps = FPS_FORMAT.format(fps) + " FPS@" + Integer.valueOf(mWidth) + "x" + Integer.valueOf(mHeight);
+                else
+                    mStrfps = FPS_FORMAT.format(fps) + " FPS";
+                Log.i(TAG, mStrfps);
+            }
+        }
+        return mStrfps;
     }
 
     public void setResolution(int width, int height) {

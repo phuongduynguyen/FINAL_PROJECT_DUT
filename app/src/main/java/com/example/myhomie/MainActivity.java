@@ -96,9 +96,9 @@ public class MainActivity extends AppCompatActivity {
 //
 //            }
 //        });
-        btnDangky.setOnClickListener(v -> DangKy());
-        btnDangNhap.setOnClickListener(v -> DangNhap());
-        forgotPassword.setOnClickListener(v -> {
+            btnDangky.setOnClickListener(v -> DangKy());
+            btnDangNhap.setOnClickListener(v -> DangNhap());
+            forgotPassword.setOnClickListener(v -> {
             EditText resetMail = new EditText(v.getContext());
             AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(v.getContext());
             passwordResetDialog.setTitle("Reset PassWord ?");
