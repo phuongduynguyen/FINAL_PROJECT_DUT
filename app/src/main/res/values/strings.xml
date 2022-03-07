@@ -13,5 +13,6 @@
     <string name="temperature">28 °C</string>
     <string name="humidity">75 %</string>
     <string name="title_co2">CO</string>
+    <string name="select" >Select Devices</string>
 
 </resources>

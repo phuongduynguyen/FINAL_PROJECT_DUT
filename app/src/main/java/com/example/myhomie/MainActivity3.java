@@ -27,10 +27,14 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -68,14 +72,12 @@ import java.util.Date;
 
 public class MainActivity3 extends AppCompatActivity {
 
-    private static final int NOTIFICATION_ID = 1;
-    private static final int JOB_ID = 123;
+    String item;
     private MediaPlayer mediaPlayer;
     private BroadcastReceiver broadcastReceiver;
 
     TextView tvName, tvCountry, tvTemp, tvHumid, tvStatus, tvWind, tvDay, tvCloudsmall;
     ImageView imgIcon;
-    String City = "";
     RelativeLayout relativeLayout;
 
     static {
@@ -87,10 +89,9 @@ public class MainActivity3 extends AppCompatActivity {
         }
     }
 
-    private static final int NOTIFY_ID = 2020;
+
 
     ImageView   infor, sensor, weather, cctv;
-
     LinearLayout textsplash, texthome, menus;
     Animation    frombottom;
     FirebaseAuth mAth;
@@ -113,8 +114,6 @@ public class MainActivity3 extends AppCompatActivity {
                 .requestEmail()
                 .build();
 
-        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
-        GoogleSignInAccount googleSignInAccount = GoogleSignIn.getLastSignedInAccount(this);
 
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
@@ -270,8 +269,241 @@ public class MainActivity3 extends AppCompatActivity {
         });
 
         dialog.show();
+    }
 
-        
+
+    private void openChangePassDialog1(int gravity){
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.activity_reset);
+
+        Window window = dialog.getWindow();
+        if (window == null)
+        {
+            return;
+        }
+
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        WindowManager.LayoutParams windowAttributes = window.getAttributes();
+        windowAttributes.gravity = gravity;
+        window.setAttributes(windowAttributes);
+
+        if(Gravity.BOTTOM == gravity)
+        {
+            dialog.setCancelable(true);
+        } else {
+            dialog.setCancelable(true);
+        }
+
+        final DatabaseReference device_pass = database.getReference("Device_Pass");
+        final DatabaseReference device_ssid = database.getReference("Device_Ssid");
+        final DatabaseReference monitor_pass = database.getReference("Monitor_Pass");
+        final DatabaseReference monitor_ssid = database.getReference("Monitor_Ssid");
+        final DatabaseReference door_pass = database.getReference("Door_Pass");
+        final DatabaseReference door_ssid = database.getReference("Door_Ssid");
+        final DatabaseReference cam_pass = database.getReference("Cam_Pass");
+        final DatabaseReference cam_ssid = database.getReference("Cam_Ssid");
+
+        String[] items = {"Device", "Monitor", "Door", "Camera"};
+        AutoCompleteTextView autoComplete;
+        ArrayAdapter<String> adapterItem;
+        TextView tvSsid = dialog.findViewById(R.id.ssid);
+        TextView tvPass = dialog.findViewById(R.id.pass);
+
+        autoComplete = dialog.findViewById(R.id.auto_complete);
+        adapterItem = new ArrayAdapter<String>(this, R.layout.list_item, items);
+        autoComplete.setAdapter(adapterItem);
+
+        autoComplete.setOnItemClickListener((parent, view, position, id) -> {
+            item = parent.getItemAtPosition(position).toString();
+            if (item.equals("Device"))
+            {
+                device_ssid.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String value = snapshot.getValue(String.class);
+                        if (!value.equals("NULL"))
+                        {
+                            tvSsid.setText(value);
+                        }
+                        else
+                        {
+                            tvSsid.setText("DEVICE_SETUP");
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+
+                device_pass.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String value = snapshot.getValue(String.class);
+                        if (!value.equals("NULL"))
+                        {
+                            tvPass.setText(value);
+                        }
+                        else
+                        {
+                            tvPass.setText("12345678");
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+
+
+            }
+            else if (item.equals("Monitor"))
+            {
+                monitor_ssid.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String value = snapshot.getValue(String.class);
+                        if (!value.equals("NULL"))
+                        {
+                            tvSsid.setText(value);
+                        }
+                        else
+                        {
+                            tvSsid.setText("MONITOR_SETUP");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                monitor_pass.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String value = snapshot.getValue(String.class);
+                        if (!value.equals("NULL"))
+                        {
+                            tvPass.setText(value);
+                        }
+                        else
+                        {
+                            tvPass.setText("12345678");
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+            else if (item.equals("Door"))
+            {
+                door_ssid.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String value = snapshot.getValue(String.class);
+                        if (!value.equals("NULL"))
+                        {
+                            tvSsid.setText(value);
+                        }
+                        else
+                        {
+                            tvSsid.setText("DOOR_SETUP");
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                door_pass.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String value = snapshot.getValue(String.class);
+                        if (!value.equals("NULL"))
+                        {
+                            tvPass.setText(value);
+                        }
+                        else
+                        {
+                            tvPass.setText("12345678");
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+            else
+            {
+                cam_ssid.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String value = snapshot.getValue(String.class);
+                        if (!value.equals("NULL"))
+                        {
+                            tvSsid.setText(value);
+                        }
+                        else
+                        {
+                            tvSsid.setText("CAM_SETUP");
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+                cam_pass.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String value = snapshot.getValue(String.class);
+                        if (!value.equals("NULL"))
+                        {
+                            tvPass.setText(value);
+                        }
+                        else
+                        {
+                            tvPass.setText("12345678");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+            }
+        });
+
+        mData  = FirebaseDatabase.getInstance().getReference();
+        Button btnCancel1 = dialog.findViewById(R.id.btnCancel_1);
+        Button btnReset = dialog.findViewById(R.id.btnReset);
+        btnCancel1.setOnClickListener(v -> dialog.dismiss());
+        btnReset.setOnClickListener(v -> {
+            if (item.equals("Device"))
+            {
+                mData.child("ResetDevice").setValue("ON");
+            }
+            else if (item.equals("Monitor"))
+            {
+                mData.child("ResetMonitor").setValue("ON");
+            }
+            else if (item.equals("Door"))
+            {
+                mData.child("ResetDoor").setValue("ON");
+            }
+            else
+            {
+                mData.child("ResetCam").setValue("ON");
+            }
+
+        });
+        dialog.show();
     }
 
     private void startMusic(Song song) {
@@ -297,7 +529,6 @@ public class MainActivity3 extends AppCompatActivity {
 
 
     private void sendNotification() {
-
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.fire);
 
@@ -341,8 +572,9 @@ public class MainActivity3 extends AppCompatActivity {
                     startActivity(intent);
                     break;
                 case R.id.phongBep:
-                    Intent intent4 = new Intent(MainActivity3.this, Login_Activity.class);
-                    startActivity(intent4);
+//                    Intent intent4 = new Intent(MainActivity3.this, Reset_Activity.class);
+//                    startActivity(intent4);
+                    openChangePassDialog1(Gravity.CENTER);
                     break;
                 case R.id.monitor:
                     Intent intent2 = new Intent(MainActivity3.this, MainActivity4.class);
@@ -409,7 +641,6 @@ public class MainActivity3 extends AppCompatActivity {
                             tvName.setText(name);
 
                         }
-
 
                         long l = Long.valueOf(day);
                         Date date = new Date(l*1000L);

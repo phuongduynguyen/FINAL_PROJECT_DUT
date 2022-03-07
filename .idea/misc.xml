@@ -3,11 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/DOANTOTNGHIEP/MyHomie- tflite/app/src/main/res/drawable/custom_layout_dialog.xml" value="0.2355" />
         <entry key="..\:/DOANTOTNGHIEP/MyHomie- tflite/app/src/main/res/drawable/google1.xml" value="0.1795" />
         <entry key="..\:/DOANTOTNGHIEP/MyHomie- tflite/app/src/main/res/layout/activity_camera.xml" value="0.18" />
+        <entry key="..\:/DOANTOTNGHIEP/MyHomie- tflite/app/src/main/res/layout/activity_login.xml" value="0.14515027322404372" />
         <entry key="..\:/DOANTOTNGHIEP/MyHomie- tflite/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/DOANTOTNGHIEP/MyHomie- tflite/app/src/main/res/layout/activity_main3.xml" value="0.15" />
+        <entry key="..\:/DOANTOTNGHIEP/MyHomie- tflite/app/src/main/res/layout/activity_reset.xml" value="0.5" />
         <entry key="..\:/DOANTOTNGHIEP/MyHomie- tflite/app/src/main/res/layout/bmp.xml" value="0.15" />
+        <entry key="..\:/DOANTOTNGHIEP/MyHomie- tflite/app/src/main/res/layout/custom_device.xml" value="0.22" />
+        <entry key="..\:/DOANTOTNGHIEP/MyHomie- tflite/app/src/main/res/layout/layout_dialog.xml" value="0.22" />
+        <entry key="..\:/DOANTOTNGHIEP/MyHomie- tflite/app/src/main/res/layout/list_item.xml" value="0.17725409836065573" />
+        <entry key="..\:/DOANTOTNGHIEP/MyHomie- tflite/app/src/main/res/menu/menu_demo.xml" value="0.19054054054054054" />
+        <entry key="..\:/DOANTOTNGHIEP/MyHomie- tflite/app/src/main/res/menu/menu_device.xml" value="0.11317567567567567" />
       </map>
     </option>
   </component>

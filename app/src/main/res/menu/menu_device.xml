@@ -5,7 +5,7 @@
         android:title="Living room"
         android:id="@+id/phongKhach" />
     <item
-        android:title="Kitchen"
+        android:title="Config Wifi"
         android:id="@+id/phongBep" />
     <item
         android:title="Monitor"

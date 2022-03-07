@@ -41,7 +41,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyHomie"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Login_Activity"></activity>
+        <activity android:name=".Reset_Activity"></activity>
         <activity android:name=".Custom_Device" />
         <activity android:name=".MainActivity5" />
         <activity android:name=".MainActivity4" />

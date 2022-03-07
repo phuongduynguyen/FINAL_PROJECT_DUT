@@ -313,7 +313,5 @@
                 app:layout_constraintVertical_bias="0.879" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </soup.neumorphism.NeumorphCardView>
 </RelativeLayout>
